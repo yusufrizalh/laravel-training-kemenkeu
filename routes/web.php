@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 //     return "Nama saya adalah " . $nama; 
 // });
 
-Route::get('/', 'HomeController@index');
+// Route::get('/', 'HomeController@index');
 
 Route::get('/posts', 'PostController@index');
 
@@ -62,3 +62,7 @@ Route::view('/series/delete', 'series/delete');
 Route::view('/series/edit', 'series/edit');
 Route::view('/series/index', 'series/index');
 Route::view('/series/show', 'series/show');
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
