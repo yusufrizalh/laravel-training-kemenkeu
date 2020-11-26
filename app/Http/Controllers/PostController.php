@@ -36,18 +36,14 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
-        // membuat validasi form 
-        // $attrs = $this->validateRequest();
         $attrs = $request->all();
 
         $attrs['slug'] = \Str::slug(request('title'));
         $attrs['category_id'] = request('category');
-        $post = Post::create($attrs);
+        $post = auth()->user()->posts()->create($attrs);
         $post->tags()->attach(request('tags'));
 
         session()->flash('success', 'Post berhasil disimpan!');
-        // session()->flash('error', 'Post gagal disimpan!'); 
-
         return redirect('posts');
     }
 
@@ -63,8 +59,7 @@ class PostController extends Controller
 
     public function update(Post $post, PostRequest $request)
     {
-        // membuat validasi form 
-        // $attrs = $this->validateRequest();
+        $this->authorize('update', $post);
         $attrs = $request->all();
 
         $attrs['category_id'] = request('category');
@@ -85,10 +80,14 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        // dd($post);
-        $post->tags()->detach();
-        $post->delete();
-        session()->flash('success', 'Post berhasil dihapus!');
-        return redirect('posts');
+        if (auth()->user()->is($post->author)) {
+            $post->tags()->detach();
+            $post->delete();
+            session()->flash('success', 'Post berhasil dihapus!');
+            return redirect('posts');
+        } else {
+            session()->flash('error', 'Post ini bukan milik anda!');
+            return redirect('posts');
+        }
     }
 }

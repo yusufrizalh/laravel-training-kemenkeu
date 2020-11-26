@@ -20,6 +20,11 @@
         <p>{{ $post->body }}</p>
 
         <div>
+            <div class="text-secondary">
+                Author: {{ $post->author->name }}
+            </div>
+            {{-- @auth --}}
+            @if(auth()->user()->is($post->author))
             <button type="submit" class="btn btn-link text-danger btn-sm p-0" data-toggle="modal"
                 data-target="#exampleModal">
                 Delete
@@ -58,5 +63,7 @@
                 </div>
             </div>
         </div>
+            @endif
+            {{-- @endauth --}}
     </div>
 @endsection
