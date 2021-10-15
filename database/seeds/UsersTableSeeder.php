@@ -10,7 +10,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Yusuf Rizal H.',
             'username' => 'rizal',
             'password' => bcrypt('Pa$$w0rd'),
-            'email' => 'yusufrizalh@gmail.com',
+            'email' => 'rizal@gmail.com',
         ]);
     }
 }

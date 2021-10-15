@@ -8,7 +8,8 @@ class Post extends Model
 {
     // membuat mass assignment: guarded & fillable  
     // protected $guarded = [];    // seluruh input diijinkan 
-    protected $fillable = ['title', 'slug', 'body', 'category_id'];    // input tertentu saja yg diijinkan 
+
+    protected $fillable = ['title', 'slug', 'body', 'category_id', 'thumbnail'];    // input tertentu saja yg diijinkan 
 
     public function category()
     {
@@ -24,5 +25,10 @@ class Post extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getTakeImageAttribute()
+    {
+        return "/storage/" . $this->thumbnail;
     }
 }

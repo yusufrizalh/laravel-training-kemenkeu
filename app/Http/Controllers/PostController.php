@@ -36,10 +36,19 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
+        $request->validate([
+            'thumbnail' => 'image|mimes:jpeg, jpg, png, svg|max:2048'
+        ]);
         $attrs = $request->all();
 
-        $attrs['slug'] = \Str::slug(request('title'));
+        $slug = \Str::slug(request('title'));
+        $attrs['slug'] = $slug;
+
+        $thumbnail = request()->file('thumbnail') ? request()->file('thumbnail')->store("images/posts") : null;
+
         $attrs['category_id'] = request('category');
+        $attrs['thumbnail'] = $thumbnail;
+
         $post = auth()->user()->posts()->create($attrs);
         $post->tags()->attach(request('tags'));
 
@@ -59,10 +68,22 @@ class PostController extends Controller
 
     public function update(Post $post, PostRequest $request)
     {
-        $this->authorize('update', $post);
-        $attrs = $request->all();
+        $request->validate([
+            'thumbnail' => 'image|mimes:jpeg, jpg, png, svg|max:2048'
+        ]);
 
+        $this->authorize('update', $post);
+        if (request()->file('thumbnail')) {
+            \Storage::delete($post->thumbnail);
+            $thumbnail = request()->file('thumbnail');
+            $thumbnailUrl = $thumbnail->store("images/posts");
+        } else {
+            $thumbnailUrl = $post->thumbnail;
+        }
+
+        $attrs = $request->all();
         $attrs['category_id'] = request('category');
+        $attrs['thumbnail'] = $thumbnailUrl;
         $post->update($attrs);
         $post->tags()->sync(request('tags'));
 
@@ -81,6 +102,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         if (auth()->user()->is($post->author)) {
+            \Storage::delete($post->thumbnail);
             $post->tags()->detach();
             $post->delete();
             session()->flash('success', 'Post berhasil dihapus!');

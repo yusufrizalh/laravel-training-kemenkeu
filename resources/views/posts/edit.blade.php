@@ -6,7 +6,7 @@
                 <div class="card">
                     <div class="card-header">Update Post: {{ $post->title }}</div>
                     <div class="card-body">
-                        <form action="/posts/{{ $post->slug }}/edit" method="POST" autocomplete="off">
+                        <form action="/posts/{{ $post->slug }}/edit" method="POST" autocomplete="off" enctype="multipart/form-data">
                             @method('patch')
                             @csrf
                             @include('posts/partials/form-control')

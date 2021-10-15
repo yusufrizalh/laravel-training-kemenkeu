@@ -18,7 +18,7 @@
             <div>
                 @if (Auth::check())
                     <a href="/posts/create" class="btn btn-primary">New Post</a>
-                @else 
+                @else
                     <a href="/login" class="btn btn-primary">Login to Create New Post</a>
                 @endif
             </div>
@@ -30,7 +30,10 @@
                         <div class="card-header">
                             {{ $post->title }}
                         </div>
-                        <img src="{{ asset('images/my-images.jpg') }}" class="card-img-top" alt="my-images">
+                        @if ($post->thumbnail)
+                            <img class="card-img-top" src="{{ $post->takeImage }}"
+                                style="height: 270px; object-fit: cover; object-position: center">
+                        @endif
                         <div class="card-body">
                             <div>
                                 <p class="card-text">{{ Str::limit($post->body, 100, '...') }}</p>
@@ -39,7 +42,7 @@
                         </div>
                         <div class="card-footer d-flex justify-content-between">
                             Published on {{ $post->created_at->diffForHumans() }}
-                            {{-- @if(auth()->user()->is($post->author)) --}}
+                            {{-- @if (auth()->user()->is($post->author)) --}}
                             @can('update', $post)
                                 <a href="/posts/{{ $post->slug }}/edit" class="btn btn-sm btn-warning">Edit</a>
                             @endcan
